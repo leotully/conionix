@@ -1,41 +1,10 @@
-#ifndef _CONIONIX_H
-#define _CONIONIX_H
+#include <conionix.h>
 
 #include <stdio.h>
 #include <termios.h>	/* for getch */
 #include <unistd.h>		/* for wherexy */
 #include <fcntl.h>		/* for wherexy */
 #include <sys/ioctl.h>	/* for getscrnsize */
-
-#define COLOR_NORMAL			"\x1B[0m"
-#define COLOR_RED				"\x1B[31m"
-#define COLOR_GREEN				"\x1B[32m"
-#define COLOR_YELLOW			"\x1B[33m"
-#define COLOR_BLUE				"\x1B[34m"
-#define COLOR_MAGENTA			"\x1B[35m"
-#define COLOR_CYAN				"\x1B[36m"
-#define COLOR_WHITE				"\x1B[37m"
-
-#define COLOR_BRIGHT_RED		"\x1B[1;31m"
-#define COLOR_BRIGHT_GREEN		"\x1B[1;32m"
-#define COLOR_BRIGHT_YELLOW		"\x1B[1;33m"
-#define COLOR_BRIGHT_BLUE		"\x1B[1;34m"
-#define COLOR_BRIGHT_MAGENTA	"\x1B[1;35m"
-#define COLOR_BRIGHT_CYAN		"\x1B[1;36m"
-#define COLOR_BRIGHT_WHITE		"\x1B[1;37m"
-
-/* typedef enum {false, true} bool; */
-
-typedef enum
-{
-	/* Dark Colors */
-	BLACK,			RED,			GREEN,			BROWN,
-	BLUE,			MAGENTA,		CYAN,			LIGHTGRAY,
-    
-	/* Light Colors */
-	DARKGRAY,		LIGHTRED,		LIGHTGREEN,		YELLOW,
-	LIGHTBLUE,		LIGHTMAGENTA,	LIGHTCYAN,		WHITE
-} CONIO_COLORS;
 
 void textcolor(int color)
 {
@@ -136,6 +105,12 @@ void restore_screen(void)
 	printf("\x1B[?47l");
 }
 
+/* set stdout buffer to 0 to auto flush output */
+void autoflush()
+{
+	(void)setvbuf(stdout, NULL, _IONBF, 0);
+}
+
               /* change */
               /* int *rows, int *cols */
 void getsrcnsize(int *cols, int *rows)
@@ -213,7 +188,6 @@ int wherexy(int *x, int *y)
 	
 	opt.c_lflag &= ~(ECHO | ICANON);
 
-	// but better just cfmakeraw(&opt);
 	tcsetattr(t, TCSANOW, &opt);
 	
 	printf("\033[6n");
@@ -244,4 +218,3 @@ int wherey(void)
 	return y;
 }
 
-#endif /* _CONIONIX_H */
